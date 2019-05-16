@@ -11,9 +11,11 @@
     "socket.io-client": "^2.2.0"
   },
   "scripts": {
+    "prestart": "next build",
+    "start": "next start -p ${PORT}",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
+    // "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
