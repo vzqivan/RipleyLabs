@@ -9,6 +9,39 @@ const index = require("./routes/index");
 const app = express();
 app.use(index);
 
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+app.listen(port);
+
+// Setting Redis Repository
+var client = require('redis').createClient(process.env.REDIS_URL);
+client.hmset('city:santiago', {
+    'latitude': '33.4488897',
+    'altitude': '-70.6692655'
+});
+client.hmset('city:zurich', {
+    'latitude': '47.3774337',
+    'altitude': '8.4666749'
+});
+client.hmset('city:auckland', {
+    'latitude': '-36.3988014',
+    'altitude': '174.3516362'
+});
+client.hmset('city:sidney', {
+    'latitude': '-33.847927',
+    'altitude': '150.651779'
+});
+client.hmset('city:london', {
+    'latitude': '-51.528308',
+    'altitude': '-0.3817822'
+});
+client.hmset('city:georgia', {
+    'latitude': '32.6581496',
+    'altitude': '-85.4224594'
+});
+
 const server = http.createServer(app);
 
 const io = socketIo(server);
@@ -16,22 +49,22 @@ const io = socketIo(server);
 const getApiAndEmit = async socket => {
   try {
     const cl = await axios.get(
-      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/33.4488897,-70.6692655?units=si"
+      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/"+client.hmget('city:santiago', 'latitude')+","+client.hmget('city:santiago', 'altitude')+"?units=si"
     ); 
     const zu = await axios.get(
-      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/47.3774337,8.4666749?units=si"
+      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/"+client.hmget('city:zurich', 'latitude')+","+client.hmget('city:santiago', 'altitude')+"?units=si"
     );
     const ak = await axios.get(
-      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/-36.3988014,174.3516362?units=si"
+      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/"+client.hmget('city:auckland', 'latitude')+","+client.hmget('city:santiago', 'altitude')+"?units=si"
     );
     const si = await axios.get(
-      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/-33.847927,150.651779?units=si"
+      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/"+client.hmget('city:sidney', 'latitude')+","+client.hmget('city:santiago', 'altitude')+"?units=si"
     );
     const lo = await axios.get(
-      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/51.528308,-0.3817822?units=si"
+      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/"+client.hmget('city:london', 'latitude')+","+client.hmget('city:santiago', 'altitude')+"?units=si"
     );
     const ge = await axios.get(
-      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/32.6581496,-85.4224594?units=si"
+      "https://api.darksky.net/forecast/fa6f4b91d744420fe9b536ec6e4d55fd/"+client.hmget('city:georgia', 'latitude')+","+client.hmget('city:santiago', 'altitude')+"?units=si"
     ); 
     //Chile
      var measuredTime = new Date(null);
